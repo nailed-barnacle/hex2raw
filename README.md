@@ -4,10 +4,12 @@ A simple utility to convert intel 16-bit address hex files into something a C co
 
 Produces a file looking something like:
 
+<pre><code>
 #define CODE_SIZE	3
 uint8_t rom[CODE_SIZE] = {
 		195, 000, 000
 };
+</code></pre>
 
 Decimal is used to allow easy manual conversion to Logisim's raw data format.
 
