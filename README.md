@@ -11,6 +11,8 @@ uint8_t rom[CODE_SIZE] = {
 
 Decimal is used to allow easy manual conversion to Logisim's raw data format.
 
+Usage: hex2raw hexfile rawfile
+
 Note: does not perform any error checking other than that the files exist and can be opened. Garbage in, garbage out... 
 
 Built for linux but should compile for Windows.
