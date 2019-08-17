@@ -37,14 +37,14 @@ INTEL			intel;			// a partial intel hex line structure - ignores checksum
 uint32_t		ptr;			// the next character on the line
 uint8_t			memory[0x10000];	// we build the image here
 uint16_t		highest = 0;	// what's the highest address we've written to?
+bool			hex = true;		// true if we want to output hex (default) or false for raw
 
 int main (int argc, char * argv[])
 {
-
 	// basic check of input parameters
 	if (argc < 3)
 	{
-		printf ("Usage: hex2raw infile outfile\n");
+		printf ("Usage: hex2raw infile outfile [hex|raw]\n");
 		exit (1);
 	}
 	
@@ -60,17 +60,31 @@ int main (int argc, char * argv[])
 		printf ("Can't open output file %s\n", argv[2]);
 		exit (1);
 	}
+	
+	hex = true;
+	if (argc >= 4)
+	{
+		// look for third parameter, hex or raw
+		if (0 == strcmp(argv[3], "raw"))
+		{
+			hex = false;
+		}
+	}
 
-	// output in decimal rather than hex; C doesn't care and it simplifies
-	// a manual conversion to logisim raw format
-	fprintf(fo, "// from %s\n", argv[1]);
-	fprintf (fo, "#define CODE_SIZE %d\n", highest);
-	fprintf (fo, "uint8_t rom[CODE_SIZE] = {");
+	if (hex)
+	{
+		fprintf (fo, "// from %s\n", argv[1]);
+		fprintf (fo, "#define CODE_SIZE %d\n", highest);
+		fprintf (fo, "uint8_t rom[CODE_SIZE] = {");
+	}
+	else
+	{
+		fprintf (fo, "v2.0 raw\n");
+	}
 	
 	// read the hex file a line at a time
     while ((read = getline (&line, &len, fi)) != -1) 
     {
-		//printf("%s", line);
 		if (':' == line[0])
 		{
 			// get the parameters
@@ -101,10 +115,21 @@ int main (int argc, char * argv[])
 		{
 			fprintf (fo, "\n");
 		}
-		fprintf (fo, "%03d, ", memory[q]);
+		if (hex)
+		{
+			fprintf (fo, "0x%02x, ", memory[q]);
+		}
+		else
+		{
+			fprintf (fo, "%02x ", memory[q]);
+		}
 	}
-	fprintf (fo, "};\n");
+	if (hex)
+	{
+		fprintf (fo, "};");
+	}
 
+	fprintf (fo, "\n");
     free (line);
 
     fclose (fi);

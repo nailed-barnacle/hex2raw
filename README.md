@@ -1,19 +1,24 @@
 <H1>hex2raw</H1>
 
-A simple utility to convert intel 16-bit address hex files into something a C compiler can digest.
+A simple utility to convert intel 16-bit address hex files into something a C compiler or Logisim can digest.
 
-Produces a file looking something like:
+Usage: hex2raw hexfile rawfile [hex!raw]
+
+By default, the output file looks like:
 
 <pre><code>
 #define CODE_SIZE	3
 uint8_t rom[CODE_SIZE] = {
-		195, 000, 000
+		0xc3, 0x00, 0x00
 };
 </code></pre>
 
-Decimal is used to allow easy manual conversion to Logisim's raw data format.
+If the third parameter is present, and is 'raw', then a logisim compatible raw file is produced. Otherwise, a hex include file is produced.
 
-Usage: hex2raw hexfile rawfile
+<pre><code>
+v2.0 raw
+c3 00 00
+</code></pre>
 
 Note: does not perform any error checking other than that the files exist and can be opened. Garbage in, garbage out... 
 
